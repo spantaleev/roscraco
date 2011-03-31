@@ -1,7 +1,8 @@
 __doc__ = open('README.rst').read()
 __doc__ += """
 
-Links                                                                                                                                                                              -----
+Links
+-----
 
 * `source <https://github.com/spantaleev/roscraco>`_
 """
