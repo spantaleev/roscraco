@@ -14,6 +14,19 @@ only important initially (when the controller object is created).
 From the developer's standpoint, settings are then managed the same way
 regardless of the device's type.
 
+
+Installing
+----------
+
+roscraco is available on PyPI_ and can be installed using **pip** or **easy_install**::
+
+    pip install roscraco
+
+or::
+
+    easy_install roscraco
+
+
 Supported devices
 -----------------
 
@@ -36,6 +49,7 @@ The library supports the following devices:
     - P320W
 * Tomato (routers using Tomato firmware)
     - version 1.23
+
 
 Supported features
 ------------------
