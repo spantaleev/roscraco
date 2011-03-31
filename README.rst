@@ -103,3 +103,5 @@ Be nice and log out of the device properly
 (you can also use ``contextlib.closing``)::
 
     controller.close()
+
+.. _PyPI: http://pypi.python.org/pypi/roscraco
