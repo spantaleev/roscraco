@@ -47,6 +47,7 @@ The library supports the following devices:
     - CNPWF514N1
 * Zyxel
     - P320W
+    - P330W
 * Tomato (routers using Tomato firmware)
     - version 1.23
 
@@ -76,7 +77,7 @@ Creating a controller instance::
     controller = roscraco.create_controller(
         roscraco.ROUTER_TP_LINK, 'WR340G',
         'localhost', 8080, 'username', 'password'
-    ) 
+    )
 
 Print a lot of information about the device::
 

@@ -39,6 +39,6 @@ setup(
         "Topic :: System :: Networking",
         "Topic :: Home Automation",
         "Topic :: Software Development :: Libraries :: Python Modules",
-    ]                                                                                                                                                                              
+    ]
 )
 
