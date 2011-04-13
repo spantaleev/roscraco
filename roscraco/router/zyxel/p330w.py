@@ -301,17 +301,18 @@ def _parse_wireless_settings(html_basic, html_advanced, html_security, html_wep)
     settings.set_ssid_broadcast_status(markup in html_advanced)
 
     if '<option selected value=1>WEP' in html_security:
-        passwords = re.compile('form.key10.value = "(.+?)";').findall(html_wep)
-        if len(passwords) != 2:
+        passwords = re.compile('form.key10.value = "(.*?)";').findall(html_wep)
+        # We expect 3 matches: 1) irrelevant 2) wep128 pass 3) wep64 pass
+        if len(passwords) != 3:
             raise RouterParseError('Wrong number of passwords retrieved:'
                                    ' %d' % len(passwords))
         key_len_64 = '<input type=radio name="wepKeyLen0" value="wep64" checked>'
         if key_len_64 in html_security:
             settings.set_security_type(WirelessSettings.SECURITY_TYPE_WEP64)
-            settings.set_password(passwords[1])
+            settings.set_password(passwords[2])
         else:
             settings.set_security_type(WirelessSettings.SECURITY_TYPE_WEP128)
-            settings.set_password(passwords[0])
+            settings.set_password(passwords[1])
     elif '<option selected value=2>WPA' in html_security:
         settings.set_security_type(WirelessSettings.SECURITY_TYPE_WPA)
     elif '<option selected value=4>WPA2' in html_security:
