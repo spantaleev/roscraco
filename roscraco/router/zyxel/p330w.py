@@ -159,6 +159,13 @@ class Zyxel_P330W(RouterBase):
 
         return settings.eq(self.get_wireless_settings(), skip_attrs=('password',))
 
+    @property
+    def supports_reboot(self):
+        return False
+
+    def reboot(self):
+        pass
+
 def _parse_router_info(html):
     obj = RouterInfo()
     obj.set_hardware_version('P-330W EE')
