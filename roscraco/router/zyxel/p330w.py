@@ -3,9 +3,9 @@ import base64
 
 from roscraco.router.base import RouterBase
 
-from roscraco.helper import validator, converter, split_list_in_groups
+from roscraco.helper import validator, converter
 from roscraco.exception import RouterFetchError, RouterParseError, \
-     RouterSettingsError, RouterIdentityError, RouterLoginError
+     RouterIdentityError
 
 from roscraco.response import RouterInfo, TrafficStats, DMZSettings, \
      ConnectedClientsListItem, ConnectedClientsList, WirelessSettings, \
@@ -35,7 +35,7 @@ class Zyxel_P330W(RouterBase):
                 )
             # would raise RouterParseError if it fails
             self.get_router_info()
-        except (RouterParseError, RouterFetchError), e:
+        except (RouterParseError, RouterFetchError):
             raise RouterIdentityError('Cannot confirm identity!')
 
     def get_router_info(self):
