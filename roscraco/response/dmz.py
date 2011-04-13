@@ -18,7 +18,7 @@ class DMZSettings(object):
 
     def set_reboot_requirement_status(self, value):
         self._changes_require_reboot = bool(value)
-        
+
     @property
     def changes_require_reboot(self):
         """Tells whether the router needs rebooting
@@ -30,45 +30,43 @@ class DMZSettings(object):
     def is_supported(self):
         """Tells whether the route supports DMZ."""
         return self._is_supported
-    
+
     def set_supported_status(self, value):
         self._is_supported = bool(value)
-        
+
     @property
     def is_enabled(self):
         """Tells whether the DMZ feature is enabled."""
         return self._is_enabled
-    
+
     def set_enabled_status(self, value):
         self._is_enabled = bool(value)
-    
+
     @property
     def ip(self):
         """The IP address of the DMZ host."""
         return self._ip
-        
+
     def set_ip(self, value):
         self._ip = value
 
     def validate(self):
         errors = {}
-        
         if not validator.is_valid_ip_address(self.ip):
             errors['ip'] = 'Invalid IP: %s' % self.ip
-            
         return errors
-    
+
     def ensure_valid(self):
         errors = self.validate()
         if len(errors) != 0:
             raise RouterSettingsError(str(errors))
-    
+
     def __eq__(self, other):
         return self.ip == other.ip and self.is_enabled == other.is_enabled
-    
+
     def __ne__(self, other):
         return not self == other
-    
+
     def __hash__(self):
         return id(self)
 

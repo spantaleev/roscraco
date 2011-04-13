@@ -3,25 +3,25 @@ from __future__ import division
 def print_info(router_obj):
     print('Details for router at %s:%d' % (router_obj.host, router_obj.port))
     print('')
-    
+
     router_info = router_obj.get_router_info()
     print('Router %s %s running on firmware %s' % (router_obj.__class__.__name__, router_info.hardware_version, router_info.firmware_version))
     print('')
-    
+
     uptime = router_obj.get_uptime()
     if uptime is None:
         print('Router uptime: UNKNOWN')
     else:
         print('Router uptime: %d seconds (~%d hours)' % (uptime, uptime / 3600))
-        
+
     online_time = router_obj.get_pppoe_online_time()
     if online_time is None:
         print('Router online time: UNKNOWN')
     else:
         print('Router online time: %d seconds (~%d hours)' % (online_time, online_time / 3600))
-    
+
     print('')
-    
+
     stats = router_obj.get_traffic_stats()
     print('Traffic statistics:')
     print(' - Received %.2fMB (%d packets)' % (stats.bytes_recv / 1024 / 1024, stats.packets_recv))
@@ -31,16 +31,16 @@ def print_info(router_obj):
 
     print('Router MAC address: %s' % router_obj.get_mac_address())
     print('')
-    
+
     print ('DNS servers: %s' % ', '.join(router_obj.get_dns_servers()))
     print('')
-    
+
 
     connected_clients_list = router_obj.get_connected_clients_list()
     print('Connected: %d clients' % len(connected_clients_list))
     for item in connected_clients_list:
         name, mac, ip = item.client_name, item.mac, item.ip
-        
+
         if item.lease_time is None:
             lease_info = ' [unknown lease time]'
         else:
@@ -48,7 +48,7 @@ def print_info(router_obj):
 
         print(' - %s (%s / %s) %s' % (name, ip, mac, lease_info))
     print('')
-    
+
     dmz_settings = router_obj.get_dmz_settings()
     if dmz_settings.is_supported:
         if dmz_settings.is_enabled:
@@ -70,21 +70,21 @@ def print_info(router_obj):
         print('DHCP server enabled with range %s - %s' % (dhcp_server.ip_start, dhcp_server.ip_end))
     else:
         print('DHCP server is disabled')
-    
-    
+
+
     reservation_list = router_obj.get_addr_reservation_list()
     if reservation_list.supports_reservations:
         print('DHCP address reservation list: %d addresses' % len(reservation_list))
         for item in reservation_list:
             mac, ip, is_enabled = item.mac, item.ip, item.is_enabled
             disabled_modifier = '' if is_enabled else '[DISABLED]'
-            
+
             print(' - %s (%s) %s' % (ip, mac, disabled_modifier))
     else:
         print('Address reservations not supported')
     print('')
 
-    
+
     wireless = router_obj.get_wireless_settings()
     if wireless.is_supported:
         print('Wireless settings:')
@@ -92,20 +92,20 @@ def print_info(router_obj):
             print(' - Wireless enabled')
         else:
             print(' - Wireless is supported, but DISABLED')
-        
+
         ssid_modifier = '[public broadcast]' if wireless.is_broadcasting_ssid else '[PRIVATE broadcast]'
         print(' - SSID: %s %s' % (wireless.ssid, ssid_modifier))
-        
+
         security_modifier = ''
         if wireless.security_type_is_wep and wireless.password is not None:
             security_modifier = '/HEX' if wireless.is_wep_password_in_hex else '/ASCII'
         print(' - Security: %s%s' % (wireless.security_type.upper(), security_modifier))
-        
+
         if wireless.channel is None:
             print(' - Channel: <UNKNOWN>')
         else:
             print(' - Channel: %d' % wireless.channel)
-        
+
         if wireless.password is None:
             print(' - Password: <UNKNOWN>')
         else:
@@ -117,12 +117,12 @@ def print_info(router_obj):
 
 def split_list_in_groups(lst, group_size):
     """Splits a list in groups of tuples.
-        
+
     The idea is that we've got related items close to each other.
     Let's say every 4 nearby items are a sequence (example below with 2 items).
-        
+
     Takes an incoming list/tuple like: ('id1', 'val1', 'id2', 'val2')
     With a group_size of 2, the result will be: (('id1', 'val1'), ('id2', 'val2'))
     """
-        
+
     return [lst[idx_start:idx_start + group_size] for idx_start in range(0, len(lst), group_size)]

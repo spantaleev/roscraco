@@ -44,7 +44,7 @@ class Zyxel_P320W(RouterBase):
                 self._is_logged_in = False
         except RouterFetchError:
             pass
-        
+
     def confirm_identity(self):
         c = self._make_http_request_read('')
         # Both of these strings are valid P-320W routers
@@ -67,20 +67,20 @@ class Zyxel_P320W(RouterBase):
 
     def get_mac_address(self):
         return parse_mac_address(self._make_http_request_read('prim.htm'))
-        
+
     def get_dns_servers(self):
         return parse_dns_servers(self._make_http_request_read('status.htm'))
 
     def get_connected_clients_list(self):
         return parse_connected_clients_list(self._make_http_request_read('clist.htm'))
-        
+
     def get_dmz_settings(self):
         settings = DMZSettings()
         settings.set_supported_status(False)
         settings.set_enabled_status(False)
         settings.set_ip('0.0.0.0')
         return settings
-    
+
     def push_dmz_settings(self, settings):
         return False
 
@@ -92,7 +92,7 @@ class Zyxel_P320W(RouterBase):
 
     def push_addr_reservation_list(self, lst_new):
         lst_new.ensure_valid()
-        
+
         lst_old = self.get_addr_reservation_list()
         if lst_old == lst_new:
             return True
@@ -100,7 +100,7 @@ class Zyxel_P320W(RouterBase):
         data = generate_addr_reservation_data(lst_new)
         self._make_http_request_write('cgi-bin/dhcp', data)
         return self.get_addr_reservation_list() == lst_new
-        
+
     def get_wireless_settings(self):
         main = self._make_http_request_read('main.htm')
         security_type, link = generate_wireless_settings_link(main)
@@ -135,7 +135,7 @@ def parse_router_info(html):
     if match_object is None:
         raise RouterParseError('Cannot parse firmware version')
     obj.set_firmware_version(match_object.group(1))
-    
+
     return obj
 
 
@@ -231,7 +231,7 @@ def parse_dhcp_settings(html):
     settings.set_ip_end(ip_end)
     settings.ensure_valid()
     return settings
-    
+
 
 def parse_addr_reservation_list(html):
     """
@@ -277,7 +277,7 @@ def _resolve_wireless_security_type(cskm):
     cskm_map = {}
 
     cskm_map['0'] = ('0000', WirelessSettings.SECURITY_TYPE_NONE)
-    
+
     # WEP could either be WEP64 or WEP128..
     # there's no way we can determine that from this context..
     cskm_map['1'] = ('1000', 'wep')
@@ -386,7 +386,7 @@ def parse_wireless_setting(security_type, html):
     obj.set_enabled_status(val1 == val2)
 
     return obj
-    
+
 
 def _denormalize_mac(mac):
     """Takes a normalized mac address (all lowercase hex, no separators)

@@ -24,15 +24,15 @@ class RouterBase(object):
     @property
     def host(self):
         return self._host
-    
+
     @property
     def port(self):
         return self._port
-    
+
     @property
     def username(self):
         return self._username
-    
+
     @property
     def password(self):
         return self._password
@@ -40,31 +40,31 @@ class RouterBase(object):
     @property
     def url_base(self):
         """The base URL to which all requests would be relative to.
-        
+
         Subclasses may wish to override this to make things
         more convenient.
         """
         return 'http://%s:%d/' % (self.host, self.port)
-    
+
     def __not_implemented(self):
         raise NotImplementedError('Method needs to be implemented in a subclass.')
-    
+
     def get_router_info(self):
         """Returns a :class:`roscraco.response.RouterInfo` object
         with system information about the router (hardware, firmware) version.
         """
         self.__not_implemented()
-    
+
     def get_mac_address(self):
         """Returns the MAC address of the router in our so called
         generic format - lowercase HEX, no separators.
         """
         self.__not_implemented()
-    
+
     def get_dns_servers(self):
         """Returns a list of IP addresses of the detected DNS servers."""
         self.__not_implemented()
-        
+
     def get_pppoe_online_time(self):
         """Returns the time in seconds since the PPPoE connection
         was made.
@@ -72,51 +72,51 @@ class RouterBase(object):
         Returns None if such information is not available
         """
         self.__not_implemented()
-    
+
     def get_uptime(self):
         """Returns the time in seconds since the router was last rebooted."""
         self.__not_implemented()
-    
+
     def get_traffic_stats(self):
         """Returns a :class:`roscraco.response.TrafficStats` object
         with traffic statistics for the WAN interface.
         """
         self.__not_implemented()
-        
+
     def get_connected_clients_list(self):
         """Returns a :class:`roscraco.response.ConnectedClientsList` object
         with information about clients that are current connected to the
         router, or have been connected to it recently.
         """
         self.__not_implemented()
-        
+
     def get_dmz_settings(self):
         """Returns a :class:`roscraco.response.DMZSettings` object
         with DMZ settings information about the router.
         """
         self.__not_implemented()
-        
+
     def push_dmz_settings(self, settings):
         """Updates the DMZ settings and returns True on success.
 
         :param settings: the DMZSettings object
         """
         self.__not_implemented()
-    
+
     def get_dhcp_settings(self):
         """Returns a :class:`roscraco.response.DHCPServerSettings` object
         with information about the current status of the DHCP server
         (on/off, supported/non-supported, IP range, etc.).
         """
         self.__not_implemented()
-    
+
     def get_addr_reservation_list(self):
         """Returns a :class:`roscraco.response.DHCPReservationList`
         with information about the current static entries in the DHCP
         reservation list.
         """
         self.__not_implemented()
-        
+
     def push_addr_reservation_list(self, lst_new):
         """Updates the DHCP address reservation settings and returns True
         on success.
@@ -131,27 +131,27 @@ class RouterBase(object):
         for this router.
         """
         self.__not_implemented()
-    
+
     def push_wireless_settings(self, settings):
         """Updates the wireless settings and returns True on success.
 
         :param settings: the WirelessSettings object
         """
         self.__not_implemented()
-    
+
     @property
     def supports_reboot(self):
         """Tells whether the device can be rebooted from the web interface."""
         self.__not_implemented()
-    
+
     def reboot(self):
         """Reboots the device."""
         self.__not_implemented()
-    
+
     def confirm_identity(self):
         """Confirms that the router we're trying to access
         is of the expected type/model.
-        
+
         If it's not it will throw an exception of type
         :class:`roscraco.exception.RouterIdentityError`.
         """
@@ -200,7 +200,7 @@ class RouterBase(object):
         (if it needs to do something special on the first request).
         """
         pass
-    
+
     def _perform_http_request(self, url, data=None, headers=(), timeout=7.0):
         """Makes the actual HTTP request and returns the result.
 
@@ -220,7 +220,7 @@ class RouterBase(object):
                 raise RouterFetchError(
                     'POST data should be a dict, a list or None!'
                 )
-                
+
         try:
             req = urllib2.Request(url, data)
             for header, value in headers:

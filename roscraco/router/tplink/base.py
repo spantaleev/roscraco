@@ -32,7 +32,7 @@ class TplinkBase(RouterBase):
     def _get_status_array(self, array_name):
         contents = self._make_http_request_read('StatusRpm.htm')
         return _extract_js_array_data(contents, array_name)
-    
+
     def get_router_info(self):
         return _parse_router_info(self._get_status_array('statusPara'))
 
@@ -41,10 +41,10 @@ class TplinkBase(RouterBase):
 
     def get_dns_servers(self):
         return _parse_dns_servers(self._get_status_array('wanPara'))
-            
+
     def get_pppoe_online_time(self):
         return _parse_pppoe_online_time(self._get_status_array('wanPara'))
-            
+
     def get_uptime(self):
         return _parse_uptime(self._get_status_array('statusPara'))
 
@@ -53,7 +53,7 @@ class TplinkBase(RouterBase):
 
     def get_connected_clients_list(self):
         return _parse_connected_clients_list(self._make_http_request_read('AssignedIpAddrListRpm.htm'))
-    
+
     def get_dmz_settings(self):
         return _parse_dmz_settings(self._make_http_request_read('DMZRpm.htm'))
 
@@ -67,40 +67,40 @@ class TplinkBase(RouterBase):
 
     def push_addr_reservation_list(self, lst_new):
         lst_new.ensure_valid()
-        
+
         lst_old = self.get_addr_reservation_list()
         if lst_old == lst_new:
             return True
-        
+
         # delete all old (currently added) items first
         for _ in lst_old:
             # delete from the front (id=0) as many times as needed
             self._make_http_request_write('FixMapCfgRpm.htm?Del=0')
-            
+
         for item in lst_new:
             data = _generate_addr_reservation_item_data(item)
             contents = self._make_http_request_write('FixMapCfgRpm.htm?%s' % urllib.urlencode(data))
-            
+
             if 'var errCode = "' in contents:
                 # could be several things (1. already added; 2. invalid MAC (broadcast..); ..)
                 raise RouterError('Error while pushing %s/%s' % (item.ip, item.mac))
-            
+
         return self.get_addr_reservation_list() == lst_new
-    
+
     def get_dhcp_settings(self):
         return _parse_dhcp_settings(self._make_http_request_read('LanDhcpServerRpm.htm'))
-    
+
     @property
     def supports_reboot(self):
         return True
-    
+
     def reboot(self):
         self._make_http_request_write('SysRebootRpm.htm?Reboot=Reboot')
 
     @property
     def url_base(self):
         return 'http://%s:%d/userRpm/' % (self.host, self.port)
-        
+
     def _ensure_www_auth_header(self, header_value_expected):
         info = self._perform_http_request('%sStatusRpm.htm' % self.url_base)[1]
         header_auth = info.getheader('WWW-Authenticate')
@@ -118,16 +118,16 @@ def is_valid_mac_address(mac):
 
 def _extract_js_array_data(contents, array_name):
     """Extracts the contents of a javascript array on the page.
-        
+
     The TP-Link control panel often uses javascript arrays to store some
     of the data on the page that would later be used to generate the UI.
-        
+
     Here's an example of an array full of data:
-        
+
     var statistList = new Array(
-    14131821, 1757256, 16065, 12432, 
+    14131821, 1757256, 16065, 12432,
     0,0 );
-        
+
     What we're actually doing below is:
     1) Find where the real array data starts (after the `(` char)
     2) Find where the real array data ends (after `);`)
@@ -138,15 +138,15 @@ def _extract_js_array_data(contents, array_name):
         start = contents.index(find) + find.__len__()
         end = contents.index(');', start)
         array_contents = '(%s)' % contents[start:end]
-        
+
         result = ast.literal_eval(array_contents)
         if not isinstance(result, tuple):
             raise RouterParseError('Bad javascript array evaluation. Result not a tuple!')
-            
+
         return result
     except Exception, e:
         raise RouterParseError('Failed at evaluating array %s: %s' % (array_name, repr(e)))
-        
+
 
 def _parse_pppoe_online_time(data_array):
     try:
@@ -164,17 +164,17 @@ def _parse_pppoe_online_time(data_array):
 def _parse_uptime_to_seconds(string):
     """Parses an uptime string such as `0 day(s) 10:11:12`
     or `0 days 10:18:45` to seconds.
-        
+
     These 2 strings both appear in the router interface.
     """
     regex = re.compile('([0-9]+) (?:days|day\(s\)) ([0-9]+):([0-9]+):([0-9]+)')
     match_object = regex.match(string)
     if match_object is None:
         raise RouterParseError('Invalid uptime string `%s`' % str(string))
-            
+
     days, hours, minutes, seconds = map(int, match_object.groups())
     return days * 86400 + hours * 3600 + minutes * 60 + seconds
-    
+
 
 def _parse_uptime(data_array):
     try:
@@ -192,7 +192,7 @@ def _parse_router_info(data_array):
         return obj
     except IndexError, e:
         raise RouterParseError('Cannot access the array index: %s' % repr(e))
-    
+
 
 def _parse_mac_address(data_array):
     try:
@@ -213,56 +213,56 @@ def _parse_traffic_stats(data_array):
     data_array = data_array[:4]
     if len(data_array) != 4:
         raise RouterParseError('Unexpected stats size: %d' % len(data_array))
-        
+
     data_array = map(int, list(data_array))
     return TrafficStats(*data_array)
 
 
 def _parse_lease_time(string):
     """Parses a lease time string such as `04:23:15` to seconds.
-        
+
     The format is HH:MM:SS
     """
     parts = string.split(':')
     if len(parts) != 3:
         raise RouterParseError('Cannot parse lease time string: %s' % string)
-            
+
     try:
         parts = map(int, parts)
     except ValueError, e:
         raise RouterParseError('Found non-numeric part in lease time %s: %s' % (string, repr(e)))
 
     hours, minutes, seconds = parts
-        
+
     return hours * 3600 + minutes * 60 + seconds
-    
-    
+
+
 def _parse_dmz_settings(contents):
     array_name = 'DMZInf'
-        
+
     result = _extract_js_array_data(contents, array_name)
-        
+
     try:
         ip = result[1].strip(' ')
         if not validator.is_valid_ip_address(ip):
             raise RouterParseError('Invalid IP address: %s' % ip)
-            
+
         obj = DMZSettings()
         obj.set_supported_status(True)
         obj.set_enabled_status(result[0] == 1)
         obj.set_ip(result[1])
-            
+
         return obj
     except IndexError, e:
         raise RouterParseError(repr(e))
-        
+
 
 def _parse_addr_reservation_list(contents):
     array_name = 'dhcpList'
-        
+
     result = _extract_js_array_data(contents, array_name)
     result = result[:-2]    # the last 2 elements are not needed
-        
+
     # each 3 subsequent items are related (mac_address, ip, is_enabled)
     list_raw = split_list_in_groups(result, 3)
 
@@ -275,7 +275,7 @@ def _parse_addr_reservation_list(contents):
         reservation_list.append(item)
 
     return reservation_list
-    
+
 
 def _parse_connected_clients_list(html):
     # the last 2 elements of the data array are not needed
@@ -287,25 +287,25 @@ def _parse_connected_clients_list(html):
     for client_name, mac, ip, lease_time in split_list_in_groups(result, 4):
         if not validator.is_valid_ip_address(ip):
             raise RouterParseError('Invalid IP address: %s' % ip)
-        
+
         item = ConnectedClientsListItem()
         item.set_client_name(client_name)
         item.set_mac(converter.normalize_mac(mac))
         item.set_ip(ip)
-            
+
         if lease_time == 'Permanent':
             item.set_lease_time(item.__class__.LEASE_TIME_PERMANENT)
         else:
             item.set_lease_time(_parse_lease_time(lease_time))
-            
+
         lst.append(item)
-            
+
     return lst
 
 
 def _parse_dhcp_settings(html):
     settings = DHCPServerSettings()
-    
+
     array = _extract_js_array_data(html, 'DHCPPara')
 
     try:
@@ -314,18 +314,18 @@ def _parse_dhcp_settings(html):
         settings.set_ip_end(array[2])
     except IndexError, e:
         raise RouterParseError(repr(e))
-    
+
     settings.ensure_valid()
     return settings
 
 
 def _generate_dmz_data(settings):
     settings.ensure_valid()
-    
+
     get_params = {}
     get_params['ipAddr'] = settings.ip
     get_params['enable'] = 1 if settings.is_enabled else 0
-    get_params['netMask'] = '255.255.255.0' 
+    get_params['netMask'] = '255.255.255.0'
     get_params['Save'] = 'Save'
     return get_params
 

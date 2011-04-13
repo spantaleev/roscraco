@@ -10,16 +10,16 @@ class TrafficStats(object):
     @property
     def bytes_recv(self):
         return self._bytes_recv
-        
+
     @property
     def bytes_sent(self):
         return self._bytes_sent
-    
+
     @property
     def packets_recv(self):
         return self._packets_recv
-        
+
     @property
     def packets_sent(self):
         return self._packets_sent
-        
+

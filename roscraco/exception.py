@@ -1,9 +1,9 @@
 class RouterError(Exception):
     pass
-    
+
 class RouterFetchError(RouterError):
     pass
-    
+
 class RouterParseError(RouterError):
     pass
 

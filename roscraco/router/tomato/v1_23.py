@@ -85,7 +85,7 @@ class Tomato_1_23(RouterBase):
 
     def get_addr_reservation_list(self):
         html = self._make_http_request_read('basic-static.asp')
-        return _parse_addr_reservation_list(html)   
+        return _parse_addr_reservation_list(html)
 
     def push_addr_reservation_list(self, lst_new):
         http_id = self._get_http_id()
@@ -95,8 +95,8 @@ class Tomato_1_23(RouterBase):
 
     def get_wireless_settings(self):
         html = self._make_http_request_read('basic-network.asp')
-        return _parse_wireless_settings(html)   
-        
+        return _parse_wireless_settings(html)
+
     def push_wireless_settings(self, settings):
         http_id = self._get_http_id()
         data = _generate_wireless_data(http_id, settings)
@@ -129,7 +129,7 @@ def _parse_data_structure(inner_json):
         key: 'value',
         another_key: [1, 2, 3]
     }
-    
+
     We're basically using what's between the main {},
     and are parsing that, returning a dictionary.
     """
@@ -149,7 +149,7 @@ def _parse_data_structure(inner_json):
 
 def _parse_js_structure(js, name):
     """Extracts a javascript object by its name.
-    
+
     Here's what it looks like initially:
     //
     object_name = {
@@ -161,9 +161,9 @@ def _parse_js_structure(js, name):
     We're parsing the broken JSON inside, and
     we're returning a dictionary.
     """
-    
+
     regex = '//\n%s = \{(.+?)\};\n\n//' % name
-    match_object = re.compile(regex, re.DOTALL).search(js)  
+    match_object = re.compile(regex, re.DOTALL).search(js)
     if match_object is None:
         raise RouterParseError('Cannot parse main structure data')
     return _parse_data_structure(match_object.group(1))
@@ -214,7 +214,7 @@ def _parse_traffic_stats(html):
             for time_data, recv, sent in array:
                 bytes_recv += recv
                 bytes_sent += sent
-            
+
             # The stats provided are in MB,
             # but we expect Bytes
             bytes_recv *= 1024
@@ -231,7 +231,7 @@ def _parse_mac_address(status_js):
     try:
         return converter.normalize_mac(nvram['wan_hwaddr'])
     except KeyError:
-        raise RouterParseError('Cannot parse MAC address!') 
+        raise RouterParseError('Cannot parse MAC address!')
 
 
 def _parse_dns_servers(status_js):
@@ -273,20 +273,20 @@ def _parse_connected_clients_list(html):
             item.set_mac(converter.normalize_mac(mac))
             item.set_lease_time(parse_lease_time(lease_time))
             lst.append(item)
-        return lst  
+        return lst
     except ValueError:
         raise RouterParseError('Cannot parse connected clients!')
 
 
 def _parse_dmz_settings(html):
-    regex = "//\s+nvram = \{(.+?)\};\n\nvar lipp = '(.+?)';"    
+    regex = "//\s+nvram = \{(.+?)\};\n\nvar lipp = '(.+?)';"
     match_object = re.compile(regex, re.DOTALL).search(html)
     if match_object is None:
         raise RouterParseError('Cannot parse DMZ settings')
 
     bad_json_settings, lipp = match_object.groups()
     nvram = _parse_data_structure(bad_json_settings)
-    
+
     ip = nvram['dmz_ipaddr']
     if '.' not in ip:
         # it's the last part only.. it's shortened
@@ -299,7 +299,7 @@ def _parse_dmz_settings(html):
     obj.set_enabled_status(nvram['dmz_enable'] == '1')
     obj.set_ip(ip)
     obj.ensure_valid()
-    return obj      
+    return obj
 
 
 def _parse_dhcp_settings(html):
@@ -410,13 +410,13 @@ def _generate_addr_reservation_data(http_id, lst_new):
     for i, item in enumerate(lst_new):
         name = 'Client%d' % i
         items.append('<'.join((item.mac, item.ip, name)))
-    
+
     if len(items) == 0:
         items_string = ''
     else:
         items.append('')
         items_string = '>'.join(items)
-    
+
     data = {}
     data['ajax'] = 1
     data['_nextpage'] = 'basic-static.asp'
@@ -442,11 +442,11 @@ def _generate_dmz_data(http_id, settings):
 
 def _generate_wireless_data(http_id, settings):
     settings.ensure_valid()
-    
+
     nvram = settings.get_internal_param('nvram')
     if nvram is None:
         raise RouterSettingsError('Bad wireless settings. Missing nvram')
-    
+
     # We'll use all the all settings (nvram)
     # as a base for the new stuff
     # Certain fields are 'status fields', so we
@@ -519,5 +519,5 @@ def _generate_wireless_data(http_id, settings):
         else:
             data['security_mode'] = 'psk2'
             data['security_mode2'] = 'wpa2_personal'
-        
+
     return data
