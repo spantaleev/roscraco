@@ -214,6 +214,7 @@ def _parse_connected_clients_list(html):
 def _parse_dmz_settings(html):
     settings = DMZSettings()
     settings.set_reboot_requirement_status(False)
+    settings.set_supported_status(True)
     enabled = '<input type=checkbox name="enabled" value="ON" checked' in html
     settings.set_enabled_status(enabled)
     regex = re.compile('<input type=text name="ip" size=15'
