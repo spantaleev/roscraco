@@ -74,9 +74,11 @@ class Zyxel_P330W(RouterBase):
         settings_old = self.get_dmz_settings()
         if settings == settings_old:
             return True
+
         data = _generate_dmz_data(settings)
-        self._make_http_request_write('goform/formDMZ', data)
-        self._wait_for_settings_reload(wait_time=10)
+        # The router reloads its settings as we make the request,
+        # so it's normal for it to take about 10 seconds
+        self._make_http_request_write('goform/formDMZ', data, timeout=15.0)
 
         new = self.get_dmz_settings()
         if settings.is_enabled:
