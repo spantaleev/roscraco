@@ -228,6 +228,11 @@ class WirelessSettings(object):
             except AttributeError:
                 return False
 
+        # Don't try to compare passwords when there's no security type
+        if self.security_type == self.__class__.SECURITY_TYPE_NONE and \
+           other.security_type == self.__class__.SECURITY_TYPE_NONE:
+               skip_attrs = skip_attrs + ('password',)
+
         for attr in self.__class__.PROPERTIES:
             if attr in skip_attrs:
                 continue
