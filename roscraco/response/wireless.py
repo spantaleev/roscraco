@@ -217,6 +217,17 @@ class WirelessSettings(object):
         return None
 
     def eq(self, other, skip_attrs=()):
+        # WEP passwords that use HEX are not case-sensitive, so we want
+        # to validate them separately
+        if self.security_type_is_wep and other.security_type_is_wep and \
+           self.is_wep_password_in_hex and other.is_wep_password_in_hex:
+            skip_attrs = skip_attrs + ('password',)
+            try:
+                if self.password.lower() != other.password.lower():
+                    return False
+            except AttributeError:
+                return False
+
         for attr in self.__class__.PROPERTIES:
             if attr in skip_attrs:
                 continue
