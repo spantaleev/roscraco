@@ -104,7 +104,8 @@ def is_valid_wep_password(password, bit_length):
 
 def is_wep_password_in_hex(password, bit_length):
     """Tells whether we're using HEX or ASCII for the specified password."""
-
+    if password is None:
+        return False
     # the password could be either HEX or ASCII
     # HEX is valid ASCII too
     try:
