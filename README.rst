@@ -45,6 +45,7 @@ The library supports the following devices:
 * Canyon
     - CNWF514
     - CNPWF514N1
+    - CNPWF518N3
 * Zyxel
     - P320W
     - P330W

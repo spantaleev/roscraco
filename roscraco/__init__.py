@@ -15,7 +15,7 @@ from . import response
 from . import router
 
 __title__ = 'roscraco'
-__version__ = '0.1.8'
+__version__ = '0.1.9'
 __author__ = 'Slavi Pantaleev'
 __license__ = 'BSD'
 __copyright__ = 'Copyright 2011 Slavi Pantaleev'
