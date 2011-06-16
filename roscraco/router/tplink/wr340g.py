@@ -60,6 +60,9 @@ def _parse_wireless_settings_WR340G(html_settings):
     obj.set_ssid(settings_array[2])
     obj.set_enabled_status(settings_array[8] != 0)
     obj.set_ssid_broadcast_status(settings_array[9] == 1)
+    # We don't need to reboot manually..
+    # The router reboots by itself when settings are pushed.
+    obj.set_reboot_requirement_status(False)
     obj.set_channel(settings_array[6])
     obj.set_internal_param('region', settings_array[4])
     obj.set_internal_param('mode', settings_array[7])
