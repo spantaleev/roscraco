@@ -237,6 +237,6 @@ class RouterBase(object):
     def __del__(self):
         try:
             self.close()
-        except:
+        except Exception:
             # close() may fail if __init__ didn't complete
             pass

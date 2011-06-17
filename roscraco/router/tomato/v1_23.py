@@ -241,7 +241,7 @@ def _parse_dns_servers(status_js):
         return []
     try:
         ips = ast.literal_eval(match_object.group(1))
-    except:
+    except Exception:
         return []
     else:
         return [ip.strip(' ') for ip in ips if validator.is_valid_ip_address(ip)]
