@@ -142,7 +142,10 @@ def _extract_js_array_data(contents, array_name):
         result = ast.literal_eval(array_contents)
         if not isinstance(result, tuple):
             raise RouterParseError('Bad javascript array evaluation. Result not a tuple!')
-
+        # ast.literal_eval may mess up our nice unicode strings
+        # depending on the default system encoding (usually ascii)
+        result = tuple([v.decode('utf-8', 'ignore')
+                        if isinstance(v, bytes) else v for v in result])
         return result
     except Exception, e:
         raise RouterParseError('Failed at evaluating array %s: %s' % (array_name, repr(e)))

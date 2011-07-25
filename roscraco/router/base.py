@@ -227,7 +227,11 @@ class RouterBase(object):
                 req.add_header(header, value)
             with contextlib.closing(urllib2.urlopen(req, timeout=timeout)) as handle:
                 self._is_logged_in = True
-                return (handle.geturl(), handle.info(), handle.read())
+                return (
+                    handle.geturl(),
+                    handle.info(),
+                    handle.read().decode('utf-8', 'ignore')
+                )
         except Exception, e:
             raise RouterFetchError('Failed making request: %s' % repr(e))
 

@@ -190,8 +190,9 @@ def parse_connected_clients_list(html):
         list_literal = '[%s]' % match_str
         list_items = ast.literal_eval(list_literal)
         list_items.pop() # empty 'sentinel' string - not needed
-        items = split_list_in_groups(list_items, 3)
-        for ip, name, mac in items:
+        list_items = [v.decode('utf-8', 'ignore') if isinstance(v, bytes) else v
+                      for v in list_items]
+        for ip, name, mac in split_list_in_groups(list_items, 3):
             item = ConnectedClientsListItem()
             item.set_client_name(name)
             item.set_mac(converter.normalize_mac(mac))
