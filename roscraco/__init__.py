@@ -13,12 +13,15 @@
 from . import helper
 from . import response
 from . import router
+from exception import RouterNotSupported
+
 
 __title__ = 'roscraco'
 __version__ = '0.2.0'
 __author__ = 'Slavi Pantaleev'
 __license__ = 'BSD'
 __copyright__ = 'Copyright 2011 Slavi Pantaleev'
+
 
 ROUTER_TP_LINK = 'tplink'
 ROUTER_CANYON = 'canyon'
@@ -27,30 +30,52 @@ ROUTER_TOMATO = 'tomato'
 ROUTER_ZYXEL = 'zyxel'
 
 
-def create_controller(router_type, model, *args, **kwargs):
-    from exception import RouterNotSupported
-
-    # type=tomato, model=1.23 => Tomato_1_23
-    router_class_name = ''.join((
-        router_type[0].upper(),
-        router_type[1:],
-        '_',
-        model.replace('.', '_'),
-    ))
-    import_from = 'roscraco.router.%s' % router_type
-    try:
-        __import__(import_from)
-    except ImportError:
-        raise RouterNotSupported(
-            '%s is not supported (no such module)' % router_type
-        )
-
+def get_supported_types():
+    """Returns a list of supported router types."""
     import sys
-    cls = getattr(sys.modules[import_from], router_class_name, None)
+    this = sys.modules[__name__]
+    return [getattr(this, k) for k in dir(this) if k.startswith('ROUTER_')]
+
+
+def _get_type_module(router_type):
+    """Returns the module that provides the implementation
+    for this router type and throws an exception for invalid types."""
+    module = getattr(router, router_type, None)
+    if module is None:
+        raise RouterNotSupported('%s is not a supported router type.' % router_type)
+    return module
+
+
+def _ucfirst(string):
+    return string[0].upper() + string[1:]
+
+
+def get_supported_models(router_type):
+    """Returns a list of supported models for the given type
+    and throws an exception for invalid types."""
+    module = _get_type_module(router_type)
+    # All model classes are prefixed this way..
+    cls_prefix = _ucfirst(router_type) + '_'
+    prefix_len = len(cls_prefix)
+    return [k[prefix_len:] for k in dir(module) if k.startswith(cls_prefix)]
+
+
+def create_controller(router_type, router_model, *args, **kwargs):
+    module = _get_type_module(router_type)
+
+    # type=tomato, model=1.23 => class_name=Tomato_1_23
+    router_class_name = ''.join((
+        _ucfirst(router_type),
+        '_',
+        router_model.replace('.', '_'),
+    ))
+
+    cls = getattr(module, router_class_name, None)
     if cls is None:
         raise RouterNotSupported(
-            'Cannot find any class to instantiate for %s (%s) in %s' %
-                (router_class_name, model, import_from)
+            '%s is not a supported model for %s.' % (
+                    router_model,
+                    router_type,
+                )
         )
-
     return cls(*args, **kwargs)
