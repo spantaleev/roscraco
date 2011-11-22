@@ -28,6 +28,7 @@ ROUTER_CANYON = 'canyon'
 ROUTER_NETGEAR = 'netgear'
 ROUTER_TOMATO = 'tomato'
 ROUTER_ZYXEL = 'zyxel'
+ROUTER_TENDA = 'tenda'
 
 
 def get_supported_types():

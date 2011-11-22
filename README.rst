@@ -49,6 +49,8 @@ The library supports the following devices:
 * Zyxel
     - P320W
     - P330W
+* Tenda
+    - W268R
 * Tomato (routers using Tomato firmware)
     - version 1.23
 

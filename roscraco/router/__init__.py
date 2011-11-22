@@ -1,1 +1,1 @@
-from . import zyxel, tplink, canyon, tomato, netgear
+from . import zyxel, tplink, canyon, tomato, netgear, tenda
