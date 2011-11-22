@@ -5,7 +5,7 @@ import urllib
 
 from roscraco.router.base import RouterBase
 
-from roscraco.helper import validator, converter, split_list_in_groups
+from roscraco.helper import validator, converter, split_in_groups
 from roscraco.exception import RouterParseError, RouterIdentityError, \
      RouterError
 
@@ -267,7 +267,7 @@ def _parse_addr_reservation_list(contents):
     result = result[:-2]    # the last 2 elements are not needed
 
     # each 3 subsequent items are related (mac_address, ip, is_enabled)
-    list_raw = split_list_in_groups(result, 3)
+    list_raw = split_in_groups(result, 3)
 
     reservation_list = DHCPReservationList()
     for mac, ip, is_enabled in list_raw:
@@ -287,7 +287,7 @@ def _parse_connected_clients_list(html):
     lst = ConnectedClientsList()
 
     # each 4 subsequent items are related (client_name, mac_address, ip, lease_time)
-    for client_name, mac, ip, lease_time in split_list_in_groups(result, 4):
+    for client_name, mac, ip, lease_time in split_in_groups(result, 4):
         if not validator.is_valid_ip_address(ip):
             raise RouterParseError('Invalid IP address: %s' % ip)
 

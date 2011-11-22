@@ -115,14 +115,14 @@ def print_info(router_obj):
     print('')
 
 
-def split_list_in_groups(lst, group_size):
-    """Splits a list in groups of tuples.
+def split_in_groups(item, group_size):
+    """Splits an iterable in groups of tuples.
 
-    The idea is that we've got related items close to each other.
-    Let's say every 4 nearby items are a sequence (example below with 2 items).
+    If we take an incoming list/tuple like: ('id1', 'val1', 'id2', 'val2')
+    and split it with group_size 2, we'll get: [('id1', 'val1'), ('id2', 'val2')]
 
-    Takes an incoming list/tuple like: ('id1', 'val1', 'id2', 'val2')
-    With a group_size of 2, the result will be: (('id1', 'val1'), ('id2', 'val2'))
+    If we take a string like: 'abcdef'
+    and split it with group_size 2, we'll get: ['ab', 'cd', 'ef']
     """
-
-    return [lst[idx_start:idx_start + group_size] for idx_start in range(0, len(lst), group_size)]
+    return [item[idx_start:idx_start + group_size]
+                for idx_start in range(0, len(item), group_size)]
