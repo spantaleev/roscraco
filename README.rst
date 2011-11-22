@@ -33,7 +33,8 @@ Supported devices
 The library supports the following devices:
 
 * TP-Link
-    - WR340G
+    - WR340G (until v3)
+    - WR340Gv4
     - WR740N
     - WR741N
     - WR940N

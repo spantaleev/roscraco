@@ -3,6 +3,14 @@ import urllib
 from roscraco.response import WirelessSettings
 from base import TplinkBase, _extract_js_array_data
 
+from wr740n import Tplink_WR740N
+
+
+# Tp-Link WR340G v4 devices seem to be managed just like WR740N devices.
+class Tplink_WR340Gv4(Tplink_WR740N):
+    def confirm_identity(self):
+        self._ensure_www_auth_header('Basic realm="TP-LINK Wireless G Router WR340G"')
+
 
 class Tplink_WR340G(TplinkBase):
 
