@@ -2,6 +2,7 @@ import urllib
 
 from roscraco.response import WirelessSettings
 from base import TplinkBase, _extract_js_array_data
+from roscraco.exception import RouterFetchError
 
 from wr740n import Tplink_WR740N
 
@@ -20,10 +21,20 @@ class Tplink_WR340G(TplinkBase):
 
     def push_wireless_settings(self, settings):
         get_params_settings = _generate_wireless_settings_data(settings)
-        contents = self._make_http_request_write('WlanNetworkRpm.htm?%s' % urllib.urlencode(get_params_settings))
-        # Settings are successfully pushed and the router will
-        # reboot if we find this string
-        return 'Please wait a moment' in contents
+        uri = 'WlanNetworkRpm.htm?%s' % urllib.urlencode(get_params_settings)
+        try:
+            contents = self._make_http_request_write(uri)
+            # Settings are successfully pushed and the router will
+            # start the rebooting process if we find this string.
+            return 'Please wait a moment' in contents
+        except RouterFetchError, e:
+            # It sometimes updates the settings and
+            # starts rebooting without sending a response correctly.
+            # Try to detect that timeout and consider it a success too,
+            # even though it may be caused by other reasons.
+            if 'timed out' in str(e):
+                return True
+            raise
 
     def confirm_identity(self):
         self._ensure_www_auth_header('Basic realm="TP-LINK Wireless Router WR340G"')
@@ -117,7 +128,6 @@ def _generate_wireless_settings_data(settings):
         data['key1'] = settings.password
         data['length1'] = bit_length
         data['keytype'] = 1 if settings.is_wep_password_in_hex else 2 # ASCII or HEX
-
     elif settings.security_type_is_wpa:
         data['secType'] = 3
         data['encrptType'] = 1 # Automatic encryption
@@ -143,6 +153,5 @@ def _generate_wireless_settings_data(settings):
     # secStatus != 2 means 'disable security'
     if settings.security_type != WirelessSettings.SECURITY_TYPE_NONE:
         data['secStatus'] = 2 # stands for Active/True
-
 
     return data
