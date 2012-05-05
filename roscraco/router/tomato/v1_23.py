@@ -447,14 +447,12 @@ def _generate_wireless_data(http_id, settings):
     if nvram is None:
         raise RouterSettingsError('Bad wireless settings. Missing nvram')
 
-    # We'll use all the all settings (nvram)
-    # as a base for the new stuff
+    # We'll use all the settings (nvram) as a base for the new stuff
     # Certain fields are 'status fields', so we
     # don't need to push them as settings
     #
-    # Other fields are empty (like the WPA password field)
-    # if we're using WEP, so pushing an empty WPA password field
-    # would be invalid
+    # Other fields (like the WPA password one) may be empty if when using WEP,
+    # so pushing an empty WPA password field would be invalid
     attrs_skip = (
         'dhcp_num', 'dhcp_start', 'lan_gateway',
         'wl_radius_port', 'wl0_hwaddr', 'http_id',

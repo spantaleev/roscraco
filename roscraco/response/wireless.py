@@ -147,13 +147,13 @@ class WirelessSettings(object):
 
     @property
     def is_wep_password_in_hex(self):
-        """Tells whether the given WEP password is in HEX or in ASCII.
+        """Tells whether the current WEP password is in HEX or in ASCII.
 
-        Detecting this automatically allows us to set the ASCII/HEX
+        Detecting this allows us to set the ASCII/HEX
         field in the management interface automatically.
         """
         if not self.security_type_is_wep:
-            raise RouterSettingsError('Not using WEP, but trying to validate password!')
+            raise RouterSettingsError('Not using WEP, but trying to inspect password!')
         bit_length = 128 if self.security_type == self.__class__.SECURITY_TYPE_WEP128 else 64
         return validator.is_wep_password_in_hex(self.password, bit_length)
 

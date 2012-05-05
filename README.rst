@@ -93,7 +93,7 @@ Change some Wireless settings::
     settings = controller.get_wireless_settings()
 
     # Switch to the next transmission channel
-    settings.set_channel(setings.channel + 1)
+    settings.set_channel(settings.channel + 1)
 
     # Disable password authentication
     settings.set_security_type(settings.SECURITY_TYPE_NONE)

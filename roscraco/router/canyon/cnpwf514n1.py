@@ -51,7 +51,7 @@ class Canyon_CNPWF514N1(RouterBase):
     def get_connected_clients_list(self):
         # What's interesting about this router is that the DHCP list
         # shows LAN clients only (and not Wi-Fi clients)
-        # There's a separate list for Wi-Fi clients, but it shows on IPs,
+        # There's a separate list for Wi-Fi clients, but it shows only IPs,
         # so it's worthless..
         # The DHCP server (and address reservations) work on the LAN only!
         html = self._make_http_request_read('stadhcptbl.asp')

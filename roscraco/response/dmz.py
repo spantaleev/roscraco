@@ -28,7 +28,7 @@ class DMZSettings(object):
 
     @property
     def is_supported(self):
-        """Tells whether the route supports DMZ."""
+        """Tells whether the router supports DMZ."""
         return self._is_supported
 
     def set_supported_status(self, value):
