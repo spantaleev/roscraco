@@ -205,22 +205,21 @@ def _parse_pppoe_online_time(status_js):
 
 
 def _parse_traffic_stats(html):
+    # The monthly_history array contains one or more other arrays.
+    # Each of those arrays contains 3 items (like a 3-tuple), which are:
+    #   1. time data, for which 2. and 3. are
+    #   2. traffic received in KB
+    #   3. traffic sent in KB
     regex = 'monthly_history = \[\n(.+?)\];'
     match_object = re.compile(regex).search(html)
     if match_object is not None:
         try:
             array = ast.literal_eval('[%s]' % match_object.group(1))
-            bytes_recv, bytes_sent = 0, 0
+            kb_recv, kb_sent = 0, 0
             for time_data, recv, sent in array:
-                bytes_recv += recv
-                bytes_sent += sent
-
-            # The stats provided are in MB,
-            # but we expect Bytes
-            bytes_recv *= 1024
-            bytes_sent *= 1024
-
-            return TrafficStats(bytes_recv, bytes_sent, 0, 0)
+                kb_recv += recv
+                kb_sent += sent
+            return TrafficStats(kb_recv * 1024, kb_sent * 1024, 0, 0)
         except (KeyError, ValueError):
             raise RouterParseError('Cannot parse traffic stats!')
     return TrafficStats(0, 0, 0, 0)
