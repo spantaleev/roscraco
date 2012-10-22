@@ -17,7 +17,7 @@ from exception import RouterNotSupported
 
 
 __title__ = 'roscraco'
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 __author__ = 'Slavi Pantaleev'
 __license__ = 'BSD'
 __copyright__ = 'Copyright 2011 Slavi Pantaleev'
