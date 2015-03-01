@@ -26,6 +26,9 @@ or::
 
     easy_install roscraco
 
+roscraco aims to be compatible with python2 and python3. If you notice
+any compatibility problems, please let us know.
+
 
 Supported devices
 -----------------
