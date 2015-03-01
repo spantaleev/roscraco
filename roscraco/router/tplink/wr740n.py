@@ -1,7 +1,7 @@
 import urllib
 
 from roscraco.response import WirelessSettings
-from base import TplinkBase, _extract_js_array_data
+from .base import TplinkBase, _extract_js_array_data
 
 
 class Tplink_WR740N(TplinkBase):

@@ -18,7 +18,7 @@ def long2ip(ip):
 
 def normalize_mac(mac):
     """Converts any MAC address format to lowercase HEX with no separators."""
-    from validator import is_valid_mac_address
+    from .validator import is_valid_mac_address
     mac = mac.lower()
     if not is_valid_mac_address(mac):
         raise RouterParseError('MAC address %s is invalid!' % mac)

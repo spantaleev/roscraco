@@ -1,10 +1,10 @@
 import urllib
 
 from roscraco.response import WirelessSettings
-from base import TplinkBase, _extract_js_array_data
+from .base import TplinkBase, _extract_js_array_data
 from roscraco.exception import RouterFetchError
 
-from wr740n import Tplink_WR740N
+from .wr740n import Tplink_WR740N
 
 
 # Tp-Link WR340G v4 devices seem to be managed just like WR740N devices.
