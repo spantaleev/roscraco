@@ -22,10 +22,9 @@ class TplinkBase(RouterBase):
         # A bug report was submitted to TpLink, but still no progress.
         # Even if they fix it, thousands of routers out there would still
         # run the old firmware and break.
-        auth = base64.b64encode('%s:%s' % (self.username, self.password))
         kwargs['headers'] = [
             ('Accept-Encoding', 'gzip,deflate'),
-            ('Authorization', 'Basic %s' % auth),
+            ('Authorization', 'Basic %s' % self._prepare_base64_auth_string()),
         ]
         return RouterBase._perform_http_request(self, *args, **kwargs)
 

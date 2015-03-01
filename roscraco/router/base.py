@@ -1,6 +1,18 @@
-import urllib
-import urllib2
+import sys
+import base64
 import contextlib
+
+try:
+    # python3
+    import urllib.parse as urlencoder
+except ImportError:
+    # python2
+    import urllib as urlencoder
+
+try:
+    import urllib.request as requestor
+except ImportError:
+    import urllib2 as requestor
 
 from roscraco.exception import RouterFetchError
 
@@ -215,17 +227,17 @@ class RouterBase(object):
 
         if data is not None:
             if isinstance(data, dict) or isinstance(data, list):
-                data = urllib.urlencode(data)
+                data = urlencoder.urlencode(data)
             else:
                 raise RouterFetchError(
                     'POST data should be a dict, a list or None!'
                 )
 
         try:
-            req = urllib2.Request(url, data)
+            req = requestor.Request(url, data)
             for header, value in headers:
                 req.add_header(header, value)
-            with contextlib.closing(urllib2.urlopen(req, timeout=timeout)) as handle:
+            with contextlib.closing(requestor.urlopen(req, timeout=timeout)) as handle:
                 self._is_logged_in = True
                 return (
                     handle.geturl(),
@@ -234,6 +246,15 @@ class RouterBase(object):
                 )
         except Exception as e:
             raise RouterFetchError('Failed making request: %s' % repr(e))
+
+    def _prepare_base64_auth_string(self):
+        auth_string = '%s:%s' % (self.username, self.password)
+        if sys.version_info[0] == 3:
+            auth_string = bytes(auth_string, 'ascii')
+        encoded = base64.b64encode(auth_string)
+        if sys.version_info[0] == 3:
+            encoded = encoded.decode('ascii')
+        return encoded
 
     def close(self):
         """Performs cleanup, logout or whatever the device requires."""
