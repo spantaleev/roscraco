@@ -147,7 +147,7 @@ def _extract_js_array_data(contents, array_name):
         result = tuple([v.decode('utf-8', 'ignore')
                         if isinstance(v, bytes) else v for v in result])
         return result
-    except Exception, e:
+    except Exception as e:
         raise RouterParseError('Failed at evaluating array %s: %s' % (array_name, repr(e)))
 
 
@@ -160,7 +160,7 @@ def _parse_pppoe_online_time(data_array):
             return None
 
         return _parse_uptime_to_seconds(uptime_string)
-    except IndexError, e:
+    except IndexError as e:
         raise RouterParseError('Cannot access the array index: %s' % repr(e))
 
 
@@ -182,7 +182,7 @@ def _parse_uptime_to_seconds(string):
 def _parse_uptime(data_array):
     try:
         return int(data_array[4])
-    except IndexError, e:
+    except IndexError as e:
         raise RouterParseError('Cannot access the array index: %s' % repr(e))
 
 
@@ -193,14 +193,14 @@ def _parse_router_info(data_array):
         obj.set_firmware_version(data_array[5])
 
         return obj
-    except IndexError, e:
+    except IndexError as e:
         raise RouterParseError('Cannot access the array index: %s' % repr(e))
 
 
 def _parse_mac_address(data_array):
     try:
         return converter.normalize_mac(data_array[1])
-    except IndexError, e:
+    except IndexError as e:
         raise RouterParseError('Cannot access the array index: %s' % repr(e))
 
 
@@ -208,7 +208,7 @@ def _parse_dns_servers(data_array):
     try:
         dns_ips = data_array[11].split(' , ')
         return [ip.strip(' ') for ip in dns_ips if validator.is_valid_ip_address(ip)]
-    except IndexError, e:
+    except IndexError as e:
         raise RouterParseError('Cannot access the array index: %s' % repr(e))
 
 
@@ -232,7 +232,7 @@ def _parse_lease_time(string):
 
     try:
         parts = map(int, parts)
-    except ValueError, e:
+    except ValueError as e:
         raise RouterParseError('Found non-numeric part in lease time %s: %s' % (string, repr(e)))
 
     hours, minutes, seconds = parts
@@ -256,7 +256,7 @@ def _parse_dmz_settings(contents):
         obj.set_ip(result[1])
 
         return obj
-    except IndexError, e:
+    except IndexError as e:
         raise RouterParseError(repr(e))
 
 
@@ -315,7 +315,7 @@ def _parse_dhcp_settings(html):
         settings.set_enabled_status(int(array[0]) == 1)
         settings.set_ip_start(array[1])
         settings.set_ip_end(array[2])
-    except IndexError, e:
+    except IndexError as e:
         raise RouterParseError(repr(e))
 
     settings.ensure_valid()

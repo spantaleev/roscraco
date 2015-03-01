@@ -27,7 +27,7 @@ class Tplink_WR340G(TplinkBase):
             # Settings are successfully pushed and the router will
             # start the rebooting process if we find this string.
             return 'Please wait a moment' in contents
-        except RouterFetchError, e:
+        except RouterFetchError as e:
             # It sometimes updates the settings and
             # starts rebooting without sending a response correctly.
             # Try to detect that timeout and consider it a success too,

@@ -232,7 +232,7 @@ class RouterBase(object):
                     handle.info(),
                     handle.read().decode('utf-8', 'ignore')
                 )
-        except Exception, e:
+        except Exception as e:
             raise RouterFetchError('Failed making request: %s' % repr(e))
 
     def close(self):
