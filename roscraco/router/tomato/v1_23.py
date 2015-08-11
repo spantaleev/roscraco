@@ -258,7 +258,7 @@ def _parse_connected_clients_list(html):
         regex = '(\d+) days?, (\d+):(\d+):(\d+)'
         match_object = re.compile(regex).search(lease)
         if match_object is None:
-            return ConnectedClientsListItem.__class__.LEASE_TIME_PERMANENT
+            return ConnectedClientsListItem.LEASE_TIME_PERMANENT
 
         days, hours, minutes, seconds = map(int, match_object.groups())
         return days * 86400 + hours * 3600 + minutes * 60 + seconds
