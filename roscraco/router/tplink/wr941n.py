@@ -1,4 +1,4 @@
-from wr740n import Tplink_WR740N
+from .wr740n import Tplink_WR740N
 
 
 class Tplink_WR941N(Tplink_WR740N):

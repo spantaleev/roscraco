@@ -1,10 +1,10 @@
 import urllib
 
 from roscraco.response import WirelessSettings
-from base import TplinkBase, _extract_js_array_data
+from .base import TplinkBase, _extract_js_array_data
 from roscraco.exception import RouterFetchError
 
-from wr740n import Tplink_WR740N
+from .wr740n import Tplink_WR740N
 
 
 # Tp-Link WR340G v4 devices seem to be managed just like WR740N devices.
@@ -27,7 +27,7 @@ class Tplink_WR340G(TplinkBase):
             # Settings are successfully pushed and the router will
             # start the rebooting process if we find this string.
             return 'Please wait a moment' in contents
-        except RouterFetchError, e:
+        except RouterFetchError as e:
             # It sometimes updates the settings and
             # starts rebooting without sending a response correctly.
             # Try to detect that timeout and consider it a success too,

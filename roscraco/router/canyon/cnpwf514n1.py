@@ -14,8 +14,7 @@ from roscraco.response import RouterInfo, TrafficStats, DMZSettings, \
 class Canyon_CNPWF514N1(RouterBase):
 
     def _perform_http_request(self, *args, **kwargs):
-        auth = base64.b64encode('%s:%s' % (self.username, self.password))
-        kwargs['headers'] = [('Authorization', 'Basic %s' % auth)]
+        kwargs['headers'] = [('Authorization', 'Basic %s' % self._prepare_base64_auth_string())]
         return RouterBase._perform_http_request(self, *args, **kwargs)
 
     def confirm_identity(self):

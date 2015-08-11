@@ -15,8 +15,7 @@ from roscraco.response import RouterInfo, TrafficStats, DMZSettings, \
 class Zyxel_P330W(RouterBase):
 
     def _perform_http_request(self, *args, **kwargs):
-        auth = base64.b64encode('%s:%s' % (self.username, self.password))
-        kwargs['headers'] = [('Authorization', 'Basic %s' % auth)]
+        kwargs['headers'] = [('Authorization', 'Basic %s' % self._prepare_base64_auth_string())]
         return RouterBase._perform_http_request(self, *args, **kwargs)
 
     def _wait_for_settings_reload(self, wait_time=32):
