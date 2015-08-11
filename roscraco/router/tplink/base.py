@@ -25,6 +25,7 @@ class TplinkBase(RouterBase):
         auth = base64.b64encode('%s:%s' % (self.username, self.password))
         kwargs['headers'] = [
             ('Accept-Encoding', 'gzip,deflate'),
+            ('Referer', 'http://%s/' % self.host),
             ('Authorization', 'Basic %s' % auth),
         ]
         return RouterBase._perform_http_request(self, *args, **kwargs)
