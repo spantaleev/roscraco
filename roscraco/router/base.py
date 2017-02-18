@@ -248,11 +248,11 @@ class RouterBase(object):
             raise RouterFetchError('Failed making request: %s' % repr(e))
 
     def _prepare_base64_auth_string(self):
-        auth_string = '%s:%s' % (self.username, self.password)
-        if sys.version_info[0] == 3:
+        auth_string = '{0}:{1}'.format(self.username, self.password)
+        if sys.version_info[0] >= 3:
             auth_string = bytes(auth_string, 'ascii')
         encoded = base64.b64encode(auth_string)
-        if sys.version_info[0] == 3:
+        if sys.version_info[0] >= 3:
             encoded = encoded.decode('ascii')
         return encoded
 
